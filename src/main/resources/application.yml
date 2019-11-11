@@ -1,0 +1,12 @@
+spring:
+  # 环境 dev|pro
+  profiles:
+<<<<<<< HEAD
+    #active: dev
+    active: prod
+
+
+=======
+    active: dev
+#    active: prod
+>>>>>>> hxx

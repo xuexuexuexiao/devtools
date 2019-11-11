@@ -1,0 +1,201 @@
+package
+
+import org.springframework.web.bind.annotation.GetMapping;${package}.web;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+import work.devtools.common.domain.ui.ElementUIInput;
+import work.devtools.common.domain.web.DevToolsResponse;
+import work.devtools.common.domain.web.DevToolsRequest;
+import org.springframework.ui.Model;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import ${package}.pojo.po.${className};
+import work.devtools.modules.DEV.pojo.dto.Dev_${classname};
+import work.devtools.common.domain.web.DevToolsResponse;
+import work.devtools.common.domain.web.DevToolsRequest;
+import ${package}.service.Dev_${className}Service;
+import work.devtools.modules.DEV.service.Dev_viewcontrolService;
+import work.devtools.common.domain.web.QueryParams;
+import work.devtools.common.domain.web.constants.Constants;
+import work.devtools.common.utils.MapObjUtil;
+import work.devtools.common.utils.QueryUtil;
+import work.devtools.modules.DEV.pojo.enums.MessageEnum;
+
+/**
+ * ${comments}
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+ 
+@RestController
+@RequestMapping("/${name}")
+public class Dev_${className}Controller {
+	@Autowired
+	private Dev_${name}Service dev_${name}Service;
+
+    @Autowired
+    private Dev_viewcontrolService dev_viewcontrolService;
+
+    /**
+    * 初始化查询
+	* @param devToolsRequest
+	* @return
+	*/
+    @GetMapping(value = "/query_init")
+    public DevToolsResponse query_init(@RequestBody  DevToolsRequest devToolsRequest) {
+        // 1. 对 DevToolsRequest 解析
+
+        // 4. 构造 DevToolsResponse
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+
+
+        // 5. 返回 DevToolsResponse
+        return  devToolsResponse;
+    }
+
+    /**
+    * 查询
+	* @param devToolsRequest
+	* @return
+	*/
+    @PostMapping("/query")
+    public DevToolsResponse query(@RequestBody  DevToolsRequest devToolsRequest){
+        Map map = (Map) devToolsRequest.getData();
+        QueryParams queryParams = new QueryParams(map);
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+        //QueryCode 写死 通过 常量或者枚举获得  查询编号：errorQuery
+        Page<Object> error01 = QueryUtil.query("errorQuery", queryParams);
+        return devToolsResponse;
+    }
+
+
+
+
+
+    /**
+     * 新增页面
+     * @param devToolsRequest
+     * @return
+     */
+    @PostMapping("/insert_init")
+    public DevToolsResponse insert_init(@RequestBody DevToolsRequest devToolsRequest){
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+        //前端传递的参数
+
+        Object data = devToolsRequest.getData();
+        //传递参数转换 ，并查询得到栏位属性信息：可控 可输入
+        //TODO 根据程序编号和界面编号得到error新增页面控件的栏位属性信息：UI
+        getUIData(devToolsResponse, (Map) devToolsRequest.getParms());
+
+        devToolsResponse.setCode("");
+        devToolsResponse.setMessage("");
+        return devToolsResponse;
+    }
+
+
+
+
+	
+	/**
+	 * 保存
+	 */
+	@PostMapping("/insert")
+	public DevToolsResponse insert( ${className} ${classname}){
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+		if(dev_${name}Service.save(${classname})>0){
+		    //TODO  消息设置
+			return devToolsResponse;
+		}
+		return devToolsResponse;
+	}
+
+    /**
+     * 修改画面
+     * @param devToolsRequest
+     * @return
+     */
+    @PostMapping("/update_init")
+    public DevToolsResponse update_init(@RequestBody  DevToolsRequest devToolsRequest){
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+        Map<String, Object> data = (Map<String, Object>) devToolsRequest.getData();
+        //TODO  查询返回修改的实体
+
+        //TODO 获取国际化信息 设置
+        //成功Code设置
+        devToolsResponse.setCode("");
+        //消息设置
+        devToolsResponse.setMessage("");
+        return devToolsResponse;
+    }
+
+
+	/**
+	 * 修改
+	 */
+	@RequestMapping("/update")
+	public DevToolsResponse update( Dev_${className} Dev_${classname}){
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+		dev_${name}Service.update(${classname});
+        devToolsResponse.setCode("");
+        devToolsResponse.setMessage("");
+		return devToolsResponse;
+	}
+	
+	/**
+	 * 删除
+	 */
+	@PostMapping( "/remove")
+	public DevToolsResponse remove( ${pk.attrType} ${pk.attrname}){
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+		if(dev_${name}Service.remove(${pk.attrname})>0){
+            devToolsResponse.setCode(MessageEnum.DELETE_FAIL.getCode());
+            devToolsResponse.setMessage(MessageEnum.DELETE_FAIL.getMessage());
+		}else{
+            devToolsResponse.setCode(MessageEnum.DELETE_SUCCESS.getCode());
+            devToolsResponse.setMessage(MessageEnum.DELETE_SUCCESS.getMessage());
+		}
+		return devToolsResponse;
+	}
+	
+	/**
+	 * 删除
+	 */
+	@PostMapping( "/batchRemove")
+	public DevToolsResponse remove(@RequestParam("ids[]") ${pk.attrType}[] ${pk.attrname}s){
+		dev_${name}Service.batchRemove(${pk.attrname}s);
+
+        DevToolsResponse devToolsResponse = new DevToolsResponse();
+        devToolsResponse.setCode(MessageEnum.DELETE_SUCCESS.getCode());
+        devToolsResponse.setMessage(MessageEnum.DELETE_SUCCESS.getMessage());
+		return DevToolsResponse;
+	}
+
+
+    /**
+    * 获取UI 设置数据
+    * @param devToolsResponse
+    * @param parms
+    */
+    private void getUIData(DevToolsResponse devToolsResponse, Map parms) {
+        //TODO 根据界面编号得到error新增页面控件的栏位属性信息：UI
+        List<ElementUIInput> elementUIInputList = dev_viewcontrolService.findByViewcontrol01(String.valueOf(parms.get("viewcontrol01")));
+        //前端栏位控制数据
+        devToolsResponse.setUI(elementUIInputList);
+    }
+	
+}
