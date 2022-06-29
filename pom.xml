@@ -34,7 +34,7 @@
         <!--commons-collections 版本-->
         <commons-collections.version>4.3</commons-collections.version>
         <!--poi 版本-->
-        <poi-version>3.15</poi-version>
+        <poi-version>4.1.1</poi-version>
 
 
 
